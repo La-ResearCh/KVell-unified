@@ -34,6 +34,7 @@ struct slab_callback {
    slab_cb_t *cb;
    void *payload;
    void *item;
+   void *param;
 
    // Private
    enum slab_action action;
