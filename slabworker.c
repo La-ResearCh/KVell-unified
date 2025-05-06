@@ -200,6 +200,10 @@ tree_scan_res_t kv_init_scan(void *item, size_t scan_size) {
    return memory_index_scan(item, scan_size);
 }
 
+static void remove_cb(struct slab_callback *cb, void *item) {
+   free(cb);
+}
+
 /*
  * Worker context
  */
@@ -251,10 +255,27 @@ again:
                callback->slab_idx = -1;
                callback->cb(callback, NULL);
             } else {
-               callback->slab = e->slab;
-               callback->slab_idx = e->slab_idx;
-               assert(get_item_size(callback->item) <= e->slab->item_size); // Item grew, this is not supported currently!
-               update_item_async(callback);
+               if (get_item_size(callback->item) <= e->slab->item_size) {
+                  callback->slab = e->slab;
+                  callback->slab_idx = e->slab_idx;
+                  update_item_async(callback);
+               }
+               else {
+                  struct slab_callback *cb = malloc(sizeof(*cb));
+                  cb->cb = remove_cb;
+                  cb->item = callback->item;
+                  cb->payload = NULL;
+                  cb->action = DELETE;
+                  cb->slab = e->slab;
+                  cb->slab_idx = e->slab_idx;
+                  memory_index_delete(ctx->worker_id, callback->item);
+                  remove_item_async(cb);
+
+                  callback->action = ADD;
+                  callback->slab = get_slab(ctx, callback->item);
+                  callback->slab_idx = -1;
+                  add_item_async(callback);
+               }
             }
             break;
          case ADD_OR_UPDATE:
@@ -264,11 +285,28 @@ again:
                callback->slab_idx = -1;
                add_item_async(callback);
             } else {
-               callback->action = UPDATE;
-               callback->slab = e->slab;
-               callback->slab_idx = e->slab_idx;
-               assert(get_item_size(callback->item) <= e->slab->item_size); // Item grew, this is not supported currently!
-               update_item_async(callback);
+               if (get_item_size(callback->item) <= e->slab->item_size) {
+                  callback->action = UPDATE;
+                  callback->slab = e->slab;
+                  callback->slab_idx = e->slab_idx;
+                  update_item_async(callback);
+               }
+               else {
+                  struct slab_callback *cb = malloc(sizeof(*cb));
+                  cb->cb = remove_cb;
+                  cb->item = callback->item;
+                  cb->payload = NULL;
+                  cb->action = DELETE;
+                  cb->slab = e->slab;
+                  cb->slab_idx = e->slab_idx;
+                  memory_index_delete(ctx->worker_id, callback->item);
+                  remove_item_async(cb);
+
+                  callback->action = ADD;
+                  callback->slab = get_slab(ctx, callback->item);
+                  callback->slab_idx = -1;
+                  add_item_async(callback);
+               }
             }
          case DELETE:
             if(!e) {
