@@ -308,6 +308,7 @@ again:
                   add_item_async(callback);
                }
             }
+            break;
          case DELETE:
             if(!e) {
                callback->slab = NULL;
