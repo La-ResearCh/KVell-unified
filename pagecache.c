@@ -18,7 +18,7 @@
  *
  * The page cache shouldn't be used directly, the interface of the IO engine is a more convenient way to access data.
  */
-
+size_t PAGE_CACHE_SIZE = PAGE_SIZE * 7864320; // 20GB
 void page_cache_init(struct pagecache *p) {
    // declare_timer;
    // start_timer {

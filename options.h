@@ -3,7 +3,8 @@
 
 #define DEBUG 0
 #define PINNING 1
-#define PATH "/scratch%lu/kvell/slab-%d-%lu-%lu"
+// #define PATH "/mnt/nvme0n1/lrcno6/kvell/%lu/slab-%d-%lu-%lu"
+extern const char *DB_PATH;
 
 /* In memory structures */
 #define RBTREE 0
@@ -22,9 +23,10 @@
 
 /* Page cache */
 //#define PAGE_CACHE_SIZE (PAGE_SIZE * 20480)
-#define PAGE_CACHE_SIZE (PAGE_SIZE * 7864320) //30GB
+// #define PAGE_CACHE_SIZE (PAGE_SIZE * 7864320) //30GB
 //#define PAGE_CACHE_SIZE (PAGE_SIZE * 2621440) //10GB
 //#define PAGE_CACHE_SIZE (PAGE_SIZE * 786432) //3GB
+extern size_t PAGE_CACHE_SIZE;
 #define MAX_PAGE_CACHE (PAGE_CACHE_SIZE / PAGE_SIZE)
 
 /* Free list */

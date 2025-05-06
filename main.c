@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 
    /* Parsing of the options */
    if(argc < 3)
-      die("Usage: ./main <nb disks> <nb workers per disk>\n\tData is stored in %s\n", PATH);
+      die("Usage: ./main <nb disks> <nb workers per disk>\n");
    nb_disks = atoi(argv[1]);
    nb_workers_per_disk = atoi(argv[2]);
 
