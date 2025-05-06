@@ -365,8 +365,8 @@ static void *worker_slab_init(void *pdata) {
 
    __sync_add_and_fetch(&nb_workers_launched, 1);
 
-   pid_t x = syscall(__NR_gettid);
-   printf("[SLAB WORKER %lu] tid %d\n", ctx->worker_id, x);
+   // pid_t x = syscall(__NR_gettid);
+   // printf("[SLAB WORKER %lu] tid %d\n", ctx->worker_id, x);
    pin_me_on(ctx->worker_id);
 
    /* Create the pagecache for the worker */
@@ -411,7 +411,7 @@ static void *worker_slab_init(void *pdata) {
 
       worker_dequeue_requests(ctx); __5 // Process queue
 
-      show_breakdown_periodic(1000, ctx->processed_callbacks, "io_submit", "io_getevents", "io_cb", "wait", "slab_cb");
+      // show_breakdown_periodic(1000, ctx->processed_callbacks, "io_submit", "io_getevents", "io_cb", "wait", "slab_cb");
    }
 
    return NULL;
